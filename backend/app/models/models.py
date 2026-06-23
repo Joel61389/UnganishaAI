@@ -17,6 +17,8 @@ class User(Base):
     location = Column(String(100), nullable=True)
     linkedin = Column(String(255), nullable=True)
     github = Column(String(255), nullable=True)
+    wallet_address = Column(String(42), unique=True, index=True, nullable=True)
+    nonce = Column(String(100), nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     # Relationships
@@ -66,6 +68,8 @@ class Introduction(Base):
     introduction_message = Column(Text, nullable=False)
     accepted = Column(Boolean, default=False)
     sent = Column(Boolean, default=False)
+    payment_tx_hash = Column(String(66), nullable=True)
+    payment_status = Column(String(20), default="unpaid") # unpaid, escrowed, released, refunded
     created_at = Column(DateTime, default=datetime.utcnow)
 
     # Relationships

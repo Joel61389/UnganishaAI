@@ -1,6 +1,19 @@
 @import "tailwindcss";
 @config "../tailwind.config.js";
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+
+/* ── Mobile-first resets ──────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;  /* remove grey flash on tap */
+  touch-action: manipulation;                /* faster tap response */
+}
+
+html {
+  /* iOS safe-area support (notch / home indicator) */
+  padding: env(safe-area-inset-top) env(safe-area-inset-right)
+           env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
 
 body {
   @apply bg-slate-950 text-slate-100 font-sans antialiased overflow-x-hidden;
@@ -9,9 +22,26 @@ body {
     radial-gradient(at 100% 100%, rgba(255, 92, 71, 0.05) 0px, transparent 50%);
   background-attachment: fixed;
   min-height: 100vh;
+  /* prevent iOS overscroll bounce on the body itself */
+  overscroll-behavior: none;
 }
 
-/* Glassmorphism Utilities */
+/* ── Inputs: prevent iOS auto-zoom (font-size must be ≥ 16px) ────────────── */
+input, select, textarea {
+  font-size: 16px !important;   /* overrides text-sm on mobile only */
+}
+@media (min-width: 640px) {
+  input, select, textarea {
+    font-size: inherit !important;
+  }
+}
+
+/* ── Touch-friendly minimum tap target (48 × 48 px WCAG 2.5.5) ──────────── */
+button, a, [role="button"] {
+  min-height: 44px;
+}
+
+/* ── Glassmorphism Utilities ──────────────────────────────────────────────── */
 .glass-panel {
   background: rgba(15, 23, 42, 0.45);
   backdrop-filter: blur(12px);
@@ -35,14 +65,21 @@ body {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.glass-card:hover {
+.glass-card:hover,
+.glass-card:focus-within {
   background: rgba(30, 41, 59, 0.45);
   border-color: rgba(92, 122, 255, 0.2);
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 0 15px 0 rgba(92, 122, 255, 0.08);
   transform: translateY(-2px);
 }
 
-/* Premium Gradients */
+/* ── Active / pressed state for buttons on touch ─────────────────────────── */
+button:active, [role="button"]:active {
+  opacity: 0.75;
+  transform: scale(0.97);
+}
+
+/* ── Premium Gradients ────────────────────────────────────────────────────── */
 .text-gradient-brand {
   @apply bg-clip-text text-transparent bg-gradient-to-r from-brand-400 via-brand-500 to-accent-400;
 }
@@ -55,7 +92,7 @@ body {
   @apply bg-gradient-to-r from-accent-500 to-accent-600;
 }
 
-/* Custom Scrollbar for chat messages */
+/* ── Custom Scrollbar for chat messages ──────────────────────────────────── */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -74,20 +111,20 @@ body {
   background: rgba(92, 122, 255, 0.4);
 }
 
-/* Keyframes for micro-animations */
+/* ── Keyframes for micro-animations ──────────────────────────────────────── */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes slideInRight {
   from { transform: translateX(20px); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
+  to   { transform: translateX(0);    opacity: 1; }
 }
 
 @keyframes pulseGlow {
   0%, 100% { opacity: 0.5; }
-  50% { opacity: 0.8; }
+  50%       { opacity: 0.8; }
 }
 
 .animate-fade-in {
@@ -97,6 +134,25 @@ body {
 .animate-slide-in-right {
   animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
+.glow-point {
+  position: relative;
+}
+
+.glow-point::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 150%;
+  height: 150%;
+  background: radial-gradient(circle, rgba(92, 122, 255, 0.15) 0%, transparent 70%);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  animation: pulseGlow 4s infinite ease-in-out;
+}
+
+
 
 .glow-point {
   position: relative;

@@ -13,6 +13,7 @@ class UserRegister(BaseModel):
     location: Optional[str] = None
     linkedin: Optional[str] = None
     github: Optional[str] = None
+    wallet_address: Optional[str] = None
 
 class UserLogin(BaseModel):
     email: EmailStr
@@ -36,6 +37,7 @@ class UserResponse(BaseModel):
     location: Optional[str] = None
     linkedin: Optional[str] = None
     github: Optional[str] = None
+    wallet_address: Optional[str] = None
     created_at: datetime
 
     class Config:
@@ -81,6 +83,14 @@ class ChatMessageResponse(BaseModel):
     class Config:
         from_attributes = True
 
+class ChatMessagePostResponse(BaseModel):
+    user_message: ChatMessageResponse
+    assistant_message: ChatMessageResponse
+    profile_extracted: bool
+
+    class Config:
+        from_attributes = True
+
 # ================= Match Schemas =================
 class MatchResponse(BaseModel):
     id: str
@@ -105,6 +115,8 @@ class IntroductionResponse(BaseModel):
     introduction_message: str
     accepted: bool
     sent: bool
+    payment_tx_hash: Optional[str] = None
+    payment_status: str = "unpaid"
     created_at: datetime
     match_details: Optional[Dict[str, Any]] = None
 
@@ -147,3 +159,21 @@ class AnalyticsDashboard(BaseModel):
     match_success_rate: float
     top_skills: List[Dict[str, Any]]
     most_requested_roles: List[Dict[str, Any]]
+    escrow_volume: float
+    active_escrows: int
+    released_volume: float
+    refunded_volume: float
+
+# ================= Web3 Auth Schemas =================
+class NonceResponse(BaseModel):
+    wallet_address: str
+    nonce: str
+    message: str
+
+class Web3LoginRequest(BaseModel):
+    wallet_address: str
+    signature: str
+    name: Optional[str] = None
+    role: Optional[str] = "Developer"
+    location: Optional[str] = None
+    email: Optional[str] = None

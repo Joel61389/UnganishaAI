@@ -59,6 +59,15 @@ def get_dashboard_data(db: Session = Depends(get_db)):
             {"name": "Investor", "count": 2}
         ]
 
+    # 5. Web3 metrics
+    active_escrows = db.query(Introduction).filter(Introduction.payment_status == "escrowed").count()
+    released_escrows = db.query(Introduction).filter(Introduction.payment_status == "released").count()
+    refunded_escrows = db.query(Introduction).filter(Introduction.payment_status == "refunded").count()
+    
+    escrow_volume = float(active_escrows * 5.0)
+    released_volume = float(released_escrows * 5.0)
+    refunded_volume = float(refunded_escrows * 5.0)
+
     return {
         "total_users": total_users,
         "total_matches": total_matches,
@@ -66,5 +75,9 @@ def get_dashboard_data(db: Session = Depends(get_db)):
         "verified_introductions": verified_introductions,
         "match_success_rate": success_rate,
         "top_skills": top_skills,
-        "most_requested_roles": most_requested_roles
+        "most_requested_roles": most_requested_roles,
+        "escrow_volume": escrow_volume,
+        "active_escrows": active_escrows,
+        "released_volume": released_volume,
+        "refunded_volume": refunded_volume
     }

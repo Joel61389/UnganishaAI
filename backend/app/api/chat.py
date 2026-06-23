@@ -4,7 +4,7 @@ from datetime import datetime
 
 from ..database.session import get_db
 from ..models.models import User, ChatMessage, UserProfile
-from ..schemas.schemas import ChatMessageCreate, ChatMessageResponse, ProfileResponse
+from ..schemas.schemas import ChatMessageCreate, ChatMessageResponse, ChatMessagePostResponse, ProfileResponse
 from ..auth.auth_handler import get_current_user
 from ..services.profile_extractor import extract_profile
 from ..services.embedding_service import get_embedding
@@ -38,7 +38,7 @@ def get_chat_history(current_user: User = Depends(get_current_user), db: Session
         
     return messages
 
-@router.post("/message", response_model=dict)
+@router.post("/message", response_model=ChatMessagePostResponse)
 def send_message(msg_data: ChatMessageCreate, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     # 1. Save User Message
     user_msg = ChatMessage(

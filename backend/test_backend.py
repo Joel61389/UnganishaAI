@@ -16,8 +16,9 @@ from app.services.feedback_service import submit_feedback, get_feedback_stats
 def run_tests():
     print("=== STARTING INTEGRATION TESTS ===")
     
-    # 1. Initialize SQLite database for testing
+    # 1. Initialize SQLite database for testing (fresh schema every run)
     print("\n1. Initializing database...")
+    Base.metadata.drop_all(bind=engine)   # ensure clean slate with current model schema
     Base.metadata.create_all(bind=engine)
     db = SessionLocal()
     
@@ -52,14 +53,16 @@ def run_tests():
         email="founder@test.com",
         password_hash="hashed_password",
         role="Founder",
-        location="Nairobi"
+        location="Nairobi",
+        wallet_address="0x1111111111111111111111111111111111111111"
     )
     user2 = User(
         name="Test Developer",
         email="developer@test.com",
         password_hash="hashed_password",
         role="Developer",
-        location="Nairobi"
+        location="Nairobi",
+        wallet_address="0x2222222222222222222222222222222222222222"
     )
     db.add(user1)
     db.add(user2)
@@ -143,10 +146,12 @@ def run_tests():
         match_id=match_model.id,
         introduction_message=intro_msg,
         accepted=False,
-        sent=True
+        sent=True,
+        payment_status="escrowed",
+        payment_tx_hash="0xmock_fuji_tx_hash_for_testing"
     )
-    db.add(intro)
     match_model.status = "introduced"
+    db.add(intro)           # persist the introduction
     db.add(match_model)
     db.commit()
     db.refresh(intro)
@@ -178,6 +183,8 @@ def run_tests():
     db.refresh(intro)
     print(f"Introduction Accepted/Verified: {intro.accepted}")
     assert intro.accepted == True
+    print(f"Introduction Payment Status: {intro.payment_status}")
+    assert intro.payment_status == "released"
 
     # 10. Test Feedback Stats
     stats = get_feedback_stats(db)

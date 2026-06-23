@@ -9,11 +9,13 @@ import {
   User, 
   BarChart3, 
   LogOut,
-  Infinity
+  Infinity,
+  Wallet,
+  Coins
 } from 'lucide-react';
 
 export default function Navbar() {
-  const { user, logout } = useAuth();
+  const { user, logout, walletAddress, usdcBalance, connectWallet } = useAuth();
   const location = useLocation();
 
   if (!user) return null;
@@ -61,6 +63,48 @@ export default function Navbar() {
           );
         })}
       </nav>
+
+      {/* Web3 Wallet Metrics Panel */}
+      <div className="px-4 py-3.5 mx-4 my-2 rounded-xl bg-slate-900/30 border border-slate-800/80 space-y-2.5">
+        <div className="flex items-center justify-between">
+          <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Network</span>
+          <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[9px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            Fuji Testnet
+          </span>
+        </div>
+        
+        {walletAddress ? (
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-xs text-slate-400">
+              <span className="flex items-center gap-1 font-medium">
+                <Wallet className="w-3.5 h-3.5 text-brand-400" />
+                Wallet
+              </span>
+              <span className="font-mono text-slate-300 text-[11px] select-all" title={walletAddress}>
+                {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
+              </span>
+            </div>
+            
+            <div className="flex items-center justify-between text-xs text-slate-400">
+              <span className="flex items-center gap-1 font-medium">
+                <Coins className="w-3.5 h-3.5 text-amber-400" />
+                USDC Balance
+              </span>
+              <span className="font-bold text-white">
+                {usdcBalance}
+              </span>
+            </div>
+          </div>
+        ) : (
+          <button
+            onClick={() => connectWallet()}
+            className="w-full py-2 text-center text-xs font-semibold text-brand-300 bg-brand-500/10 hover:bg-brand-500/20 border border-brand-500/20 hover:border-brand-500/30 rounded-lg transition-all cursor-pointer"
+          >
+            Connect Fuji Wallet
+          </button>
+        )}
+      </div>
 
       {/* User Info & Logout */}
       <div className="p-4 border-t border-slate-800">

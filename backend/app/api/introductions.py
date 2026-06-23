@@ -55,18 +55,81 @@ def create_introduction(req: IntroductionRequest, current_user: User = Depends(g
         match_id=match.id,
         introduction_message=intro_message,
         accepted=False,
-        sent=True # Sent automatically in MVP
+        sent=False, # Unsent until payment is confirmed
+        payment_status="unpaid",
+        payment_tx_hash=None
     )
     
-    # 5. Update Match status to introduced
-    match.status = "introduced"
-    
     db.add(new_intro)
-    db.add(match)
     db.commit()
     db.refresh(new_intro)
     
     return new_intro
+
+class VerifyPaymentRequest(BaseModel):
+    introduction_id: str
+    tx_hash: str
+
+@router.post("/verify-payment")
+def verify_payment(req: VerifyPaymentRequest, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    from ..services.payment_service import verify_fuji_transaction
+    
+    intro = db.query(Introduction).filter(Introduction.id == req.introduction_id).first()
+    if not intro:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Introduction not found"
+        )
+        
+    match = db.query(Match).filter(Match.id == intro.match_id).first()
+    if not match or (match.user1_id != current_user.id and match.user2_id != current_user.id):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You are not authorized to pay for this introduction"
+        )
+        
+    # Verify the transaction on Avalanche Fuji
+    is_valid = verify_fuji_transaction(req.tx_hash, match.id, current_user.wallet_address)
+    if not is_valid:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Transaction verification failed on Avalanche Fuji. Please check transaction receipt."
+        )
+        
+    # Update payment and introduction status
+    intro.payment_status = "escrowed"
+    intro.payment_tx_hash = req.tx_hash
+    intro.sent = True
+    
+    # Update match status to introduced
+    match.status = "introduced"
+    
+    db.add(intro)
+    db.add(match)
+    db.commit()
+    db.refresh(intro)
+    
+    # Add match_details format for frontend
+    other_user_id = match.user2_id if match.user1_id == current_user.id else match.user1_id
+    other_user = db.query(User).filter(User.id == other_user_id).first()
+    
+    return {
+        "id": intro.id,
+        "match_id": intro.match_id,
+        "introduction_message": intro.introduction_message,
+        "accepted": intro.accepted,
+        "sent": intro.sent,
+        "payment_status": intro.payment_status,
+        "payment_tx_hash": intro.payment_tx_hash,
+        "created_at": intro.created_at,
+        "match_details": {
+            "score": match.score,
+            "reason": match.reason,
+            "other_user_name": other_user.name if other_user else "Unknown User",
+            "other_user_role": other_user.role if other_user else "Unknown Role",
+            "other_user_org": other_user.organization if other_user else ""
+        }
+    }
 
 @router.get("")
 def get_introductions(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
@@ -93,6 +156,8 @@ def get_introductions(current_user: User = Depends(get_current_user), db: Sessio
             "introduction_message": intro.introduction_message,
             "accepted": intro.accepted,
             "sent": intro.sent,
+            "payment_status": intro.payment_status,
+            "payment_tx_hash": intro.payment_tx_hash,
             "created_at": intro.created_at,
             "match_details": {
                 "score": match.score,

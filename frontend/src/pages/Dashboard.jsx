@@ -10,12 +10,14 @@ import {
   Sparkles, 
   ArrowRight,
   UserCheck,
-  CheckCircle2
+  CheckCircle2,
+  Wallet,
+  Coins
 } from 'lucide-react';
 
 export default function Dashboard() {
-  const { user } = useAuth();
-  const [stats, setStats] = useState({ matchesCount: 0, introsCount: 0 });
+  const { user, walletAddress, usdcBalance } = useAuth();
+  const [stats, setStats] = useState({ matchesCount: 0, introsCount: 0, escrowCount: 0 });
   const [recentMatches, setRecentMatches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [hasProfile, setHasProfile] = useState(false);
@@ -43,10 +45,12 @@ export default function Dashboard() {
         
         // Fetch introductions
         const introsRes = await axios.get('/introductions');
+        const escrowedCount = introsRes.data.filter(i => i.payment_status === 'escrowed').length;
         
         setStats({
           matchesCount: matchesRes.data.length,
-          introsCount: introsRes.data.length
+          introsCount: introsRes.data.length,
+          escrowCount: escrowedCount
         });
       }
     } catch (error) {
@@ -106,7 +110,7 @@ export default function Dashboard() {
         /* Main Dashboard View */
         <div className="space-y-6">
           {/* Quick Counter Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Matches Box */}
             <Link 
               to="/matches" 
@@ -140,6 +144,22 @@ export default function Dashboard() {
                 <Inbox className="w-6 h-6" />
               </div>
             </Link>
+
+            {/* USDC Escrow Box */}
+            <div 
+              className="p-5 rounded-2xl glass-card border border-slate-850 flex items-center justify-between group"
+            >
+              <div className="space-y-1">
+                <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">USDC in Fuji Escrow</span>
+                <span className="text-3xl font-extrabold text-white block">{stats.escrowCount * 5} USDC</span>
+                <span className="text-xs text-slate-400 font-semibold flex items-center gap-1">
+                  Active balance: {usdcBalance} USDC
+                </span>
+              </div>
+              <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400">
+                <Coins className="w-6 h-6" />
+              </div>
+            </div>
           </div>
 
           {/* Top Matches Table Card */}

@@ -45,6 +45,15 @@ def submit_feedback(user_id: str, intro_id: str, rating: int, comments: str,
     db.commit()
     db.refresh(feedback)
     
+    # Update payment status based on feedback verification
+    if intro.payment_status == "escrowed":
+        if verified:
+            intro.payment_status = "released"
+        else:
+            intro.payment_status = "refunded"
+        db.add(intro)
+        db.commit()
+    
     # Check if both parties have submitted feedback
     feedbacks = db.query(Feedback).filter(Feedback.introduction_id == intro_id).all()
     if len(feedbacks) >= 2:

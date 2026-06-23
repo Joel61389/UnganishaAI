@@ -6,7 +6,8 @@ import {
   Network, 
   CheckSquare, 
   TrendingUp, 
-  HelpCircle 
+  HelpCircle,
+  Coins
 } from 'lucide-react';
 import { Bar, Pie } from 'react-chartjs-2';
 import {
@@ -163,6 +164,43 @@ export default function Analytics() {
             </div>
           );
         })}
+      </div>
+
+      {/* Web3 Payment & Escrow Analytics Panel */}
+      <div className="p-6 rounded-2xl glass-panel-glow border-slate-800 space-y-4">
+        <div>
+          <h4 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
+            <Coins className="w-4 h-4 text-amber-400" />
+            Avalanche Fuji USDC Escrow Analytics
+          </h4>
+          <p className="text-[10px] text-slate-500 mt-0.5">Financial transparency report of connections facilitated through smart contracts.</p>
+        </div>
+        
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="p-4 rounded-xl bg-slate-900/40 border border-slate-850">
+            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Active Escrows</span>
+            <span className="text-xl font-bold text-white block mt-1">{data.active_escrows}</span>
+            <span className="text-[9px] text-slate-500">Currently locked fees</span>
+          </div>
+          
+          <div className="p-4 rounded-xl bg-slate-900/40 border border-slate-850">
+            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Locked Volume</span>
+            <span className="text-xl font-bold text-brand-300 block mt-1">{data.escrow_volume} USDC</span>
+            <span className="text-[9px] text-slate-500">Secured connection funds</span>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-900/40 border border-slate-850">
+            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Released Volume</span>
+            <span className="text-xl font-bold text-emerald-400 block mt-1">{data.released_volume} USDC</span>
+            <span className="text-[9px] text-slate-500">Successful payouts</span>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-900/40 border border-slate-850">
+            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Refunded Volume</span>
+            <span className="text-xl font-bold text-rose-400 block mt-1">{data.refunded_volume} USDC</span>
+            <span className="text-[9px] text-slate-500">Returned user fees</span>
+          </div>
+        </div>
       </div>
 
       {/* Charts Row */}
