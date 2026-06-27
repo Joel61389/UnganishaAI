@@ -205,6 +205,13 @@ def web3_login(req: Web3LoginRequest, db: Session = Depends(get_db)):
     if req.location:
         user.location = req.location
         
+    # Prevent default "Web3 User" name by extracting a clean name from email
+    if (not user.name or user.name.startswith("Web3 User")) and user.email:
+        email_prefix = user.email.split('@')[0]
+        cleaned_name = email_prefix.replace('.', ' ').replace('_', ' ').replace('-', ' ').title()
+        if not cleaned_name.lower().startswith("web3-"):
+            user.name = cleaned_name
+        
     db.commit()
     
     # Generate token

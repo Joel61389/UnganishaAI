@@ -75,7 +75,7 @@ export default function Dashboard() {
           </span>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-white">Habari, {user?.name}!</h2>
           <p className="text-slate-400 text-xs sm:text-sm leading-relaxed">
-            Welcome to Unganisha AI. We help discover hidden opportunities, jobs, collaborators, and mentorships by mapping compatibility indices within the MiniHack and Kuzana ecosystems.
+            Welcome to Unganisha AI. We help discover hidden opportunities, jobs, collaborators, and mentorships by mapping compatibility indices within the MiniHack and Unganisha ecosystems.
           </p>
         </div>
         <div className="hidden md:block absolute right-0 top-0 w-48 h-full bg-gradient-to-l from-brand-500/5 to-transparent pointer-events-none" />

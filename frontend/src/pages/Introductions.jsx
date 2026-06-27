@@ -11,17 +11,19 @@ import {
   Handshake,
   Wallet,
   Coins,
-  Link2,
   ExternalLink,
   ShieldAlert,
   ShieldCheck,
   Loader2,
-  ArrowRight
+  ArrowRight,
+  MessageCircle,
+  Mail,
+  CheckCircle2
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export default function Introductions() {
-  const { walletAddress, usdcBalance, connectWallet } = useAuth();
+  const { user, walletAddress, usdcBalance, connectWallet } = useAuth();
   
   const [introductions, setIntroductions] = useState([]);
   const [feedbacks, setFeedbacks] = useState({}); // Stores feedback ratings locally
@@ -279,9 +281,53 @@ export default function Introductions() {
                         </button>
                       </div>
                     ) : (
-                      <pre className="p-4 bg-slate-950/70 border border-slate-900 rounded-xl text-slate-300 text-xs font-mono whitespace-pre-wrap leading-relaxed max-h-80 overflow-y-auto">
-                        {intro.introduction_message}
-                      </pre>
+                      <div className="space-y-4">
+                        <pre className="p-4 bg-slate-950/70 border border-slate-900 rounded-xl text-slate-300 text-xs font-mono whitespace-pre-wrap leading-relaxed max-h-80 overflow-y-auto">
+                          {intro.introduction_message}
+                        </pre>
+
+                        {/* Delivery Status Badge */}
+                        <div className="p-3 rounded-xl bg-slate-900/40 border border-slate-800 flex items-center gap-2">
+                          {intro.delivery_method === 'whatsapp' ? (
+                            <>
+                              <MessageCircle className="w-4 h-4 text-emerald-400 shrink-0" />
+                              <div>
+                                <p className="text-[10px] font-bold text-emerald-400">Voice intro sent via WhatsApp</p>
+                                <p className="text-[9px] text-slate-500 mt-0.5">{intro.delivery_detail || 'Delivered to registered phone number'}</p>
+                              </div>
+                            </>
+                          ) : intro.delivery_method === 'email' ? (
+                            <>
+                              <Mail className="w-4 h-4 text-brand-400 shrink-0" />
+                              <div>
+                                <p className="text-[10px] font-bold text-brand-400">Voice intro sent via Email</p>
+                                <p className="text-[9px] text-slate-500 mt-0.5">{intro.delivery_detail || 'MP3 delivered to registered email'}</p>
+                              </div>
+                            </>
+                          ) : (
+                            <>
+                              <CheckCircle2 className="w-4 h-4 text-slate-400 shrink-0" />
+                              <div>
+                                <p className="text-[10px] font-bold text-slate-300">Voice introduction generated</p>
+                                <p className="text-[9px] text-slate-500 mt-0.5">Delivery in progress — check your WhatsApp or email</p>
+                              </div>
+                            </>
+                          )}
+                        </div>
+
+                        {/* Manual WhatsApp fallback */}
+                        <div className="flex flex-wrap gap-2 pt-1">
+                          <a
+                            href={`https://wa.me/?text=${encodeURIComponent(intro.introduction_message)}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-3.5 py-2 text-[11px] font-bold bg-emerald-500/10 border border-emerald-500/20 hover:border-emerald-500/30 text-emerald-400 hover:text-white rounded-xl flex items-center gap-1.5 transition-all"
+                          >
+                            <MessageCircle className="w-3.5 h-3.5" />
+                            Send Manually via WhatsApp
+                          </a>
+                        </div>
+                      </div>
                     )}
                   </div>
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import UnganishaLogo from './UnganishaLogo';
 import { 
   LayoutDashboard, 
   MessageSquare, 
@@ -9,7 +10,6 @@ import {
   User, 
   BarChart3, 
   LogOut,
-  Infinity,
   Wallet,
   Coins
 } from 'lucide-react';
@@ -21,24 +21,22 @@ export default function Navbar() {
   if (!user) return null;
 
   const navItems = [
-    { name: 'Dashboard', path: '/', icon: LayoutDashboard },
-    { name: 'Chat Onboarding', path: '/chat', icon: MessageSquare },
-    { name: 'Matches', path: '/matches', icon: Users },
-    { name: 'Introductions', path: '/introductions', icon: Inbox },
-    { name: 'Analytics', path: '/analytics', icon: BarChart3 },
-    { name: 'Profile', path: '/profile', icon: User },
+    { name: 'Dashboard',       path: '/dashboard',      icon: LayoutDashboard },
+    { name: 'Chat Onboarding', path: '/chat',           icon: MessageSquare },
+    { name: 'Matches',         path: '/matches',        icon: Users },
+    { name: 'Introductions',   path: '/introductions',  icon: Inbox },
+    { name: 'Analytics',       path: '/analytics',      icon: BarChart3 },
+    { name: 'Profile',         path: '/profile',        icon: User },
   ];
 
   return (
     <aside className="fixed inset-y-0 left-0 z-20 flex flex-col w-64 glass-panel border-r border-slate-800 animate-fade-in">
       {/* Brand Header */}
       <div className="flex items-center gap-3 px-6 h-20 border-b border-slate-800">
-        <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-500 to-accent-500 shadow-lg shadow-brand-500/20">
-          <Infinity className="w-6 h-6 text-white" />
-        </div>
+        <UnganishaLogo size={38} />
         <div>
-          <h1 className="text-xl font-bold tracking-tight text-white leading-none">Unganisha AI</h1>
-          <span className="text-[10px] text-brand-400 font-semibold tracking-wider uppercase">Kenyan Matchmaker</span>
+          <h1 className="text-lg font-extrabold tracking-tight text-white leading-none">Unganisha AI</h1>
+          <span className="text-[9px] text-brand-400 font-bold tracking-widest uppercase">Connection Intelligence</span>
         </div>
       </div>
 

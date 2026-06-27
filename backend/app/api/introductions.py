@@ -109,6 +109,23 @@ def verify_payment(req: VerifyPaymentRequest, current_user: User = Depends(get_c
     db.commit()
     db.refresh(intro)
     
+    # Trigger voice generation and real delivery (WhatsApp → email fallback)
+    from ..services.voice_service import deliver_voice_intro
+    import os
+    
+    # Build the public base URL so Twilio can fetch the media file
+    public_base_url = os.getenv("PUBLIC_BASE_URL", "")
+    
+    # Deliver to user1
+    delivery1 = deliver_voice_intro(user1, intro.introduction_message, intro.id, public_base_url)
+    # Deliver to user2
+    delivery2 = deliver_voice_intro(user2, intro.introduction_message, intro.id, public_base_url)
+    
+    audio_url = delivery1.get("audio_url") or delivery2.get("audio_url") or f"/static/audio/intro_{intro.id}.mp3"
+
+    print(f"[Introductions] Delivery for {user1.name}: {delivery1['detail']}")
+    print(f"[Introductions] Delivery for {user2.name}: {delivery2['detail']}")
+
     # Add match_details format for frontend
     other_user_id = match.user2_id if match.user1_id == current_user.id else match.user1_id
     other_user = db.query(User).filter(User.id == other_user_id).first()
@@ -122,6 +139,9 @@ def verify_payment(req: VerifyPaymentRequest, current_user: User = Depends(get_c
         "payment_status": intro.payment_status,
         "payment_tx_hash": intro.payment_tx_hash,
         "created_at": intro.created_at,
+        "voice_url": audio_url,
+        "delivery_method": delivery1.get("method", "unknown"),
+        "delivery_detail": delivery1.get("detail", ""),
         "match_details": {
             "score": match.score,
             "reason": match.reason,
@@ -159,6 +179,7 @@ def get_introductions(current_user: User = Depends(get_current_user), db: Sessio
             "payment_status": intro.payment_status,
             "payment_tx_hash": intro.payment_tx_hash,
             "created_at": intro.created_at,
+            "voice_url": f"/static/audio/intro_{intro.id}.mp3" if intro.sent else "",
             "match_details": {
                 "score": match.score,
                 "reason": match.reason,

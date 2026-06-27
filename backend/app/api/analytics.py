@@ -81,3 +81,27 @@ def get_dashboard_data(db: Session = Depends(get_db)):
         "released_volume": released_volume,
         "refunded_volume": refunded_volume
     }
+
+@router.get("/users")
+def get_all_users(db: Session = Depends(get_db)):
+    """
+    Returns a list of all registered users with basic info and their match count.
+    """
+    users = db.query(User).order_by(User.created_at.desc()).all()
+    result = []
+    for user in users:
+        match_count = db.query(Match).filter(
+            (Match.user1_id == user.id) | (Match.user2_id == user.id)
+        ).count()
+        result.append({
+            "id": user.id,
+            "name": user.name,
+            "email": user.email,
+            "role": user.role,
+            "location": user.location or "N/A",
+            "organization": user.organization or "N/A",
+            "phone": user.phone or "N/A",
+            "match_count": match_count,
+            "joined": user.created_at.strftime("%d %b %Y") if user.created_at else "N/A"
+        })
+    return result

@@ -227,6 +227,7 @@ def startup_event():
     # Seed data
     db = SessionLocal()
     try:
-        seed_data(db)
+        # seed_data(db)
+        pass
     finally:
         db.close()

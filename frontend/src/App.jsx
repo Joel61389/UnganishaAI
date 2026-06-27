@@ -4,6 +4,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 
 // Components & Pages
 import Navbar from './components/Navbar';
+import LandingPage from './pages/LandingPage';
 import Dashboard from './pages/Dashboard';
 import Chatbot from './pages/Chatbot';
 import Matches from './pages/Matches';
@@ -13,7 +14,29 @@ import Profile from './pages/Profile';
 import Login from './pages/Login';
 import Register from './pages/Register';
 
-// Protected Route Guard
+/**
+ * PublicRoute — shows the landing page to unauthenticated users.
+ * Authenticated users are redirected to the dashboard.
+ */
+const PublicRoute = ({ children }) => {
+  const { token, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen space-y-4">
+        <div className="w-10 h-10 border-4 border-brand-500/20 border-t-brand-500 rounded-full animate-spin"></div>
+        <p className="text-slate-400 text-sm">Loading Unganisha AI...</p>
+      </div>
+    );
+  }
+
+  if (token) return <Navigate to="/dashboard" replace />;
+  return children;
+};
+
+/**
+ * ProtectedLayout — wraps authenticated routes with the sidebar nav.
+ */
 const ProtectedLayout = ({ children }) => {
   const { token, loading } = useAuth();
 
@@ -27,7 +50,7 @@ const ProtectedLayout = ({ children }) => {
   }
 
   if (!token) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/" replace />;
   }
 
   return (
@@ -50,12 +73,19 @@ export default function App() {
     <AuthProvider>
       <Router>
         <Routes>
-          {/* Public Auth Routes */}
-          <Route path="/login" element={<Login />} />
+          {/* ── Public Landing Page ── */}
+          <Route path="/" element={
+            <PublicRoute>
+              <LandingPage />
+            </PublicRoute>
+          } />
+
+          {/* ── Public Auth Routes ── */}
+          <Route path="/login"    element={<Login />} />
           <Route path="/register" element={<Register />} />
 
-          {/* Protected Main Routes */}
-          <Route path="/" element={
+          {/* ── Protected App Routes ── */}
+          <Route path="/dashboard" element={
             <ProtectedLayout>
               <Dashboard />
             </ProtectedLayout>
@@ -86,7 +116,7 @@ export default function App() {
             </ProtectedLayout>
           } />
 
-          {/* Fallback Route */}
+          {/* ── Fallback ── */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>
