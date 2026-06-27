@@ -7,7 +7,6 @@ import {
   Star, 
   ThumbsUp, 
   ThumbsDown, 
-  Sparkles, 
   Handshake,
   Wallet,
   Coins,
@@ -357,7 +356,6 @@ export default function Introductions() {
                 <div className="w-full md:w-80 p-6 bg-slate-900/10 space-y-5">
                   <div>
                     <h5 className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
-                      <Sparkles className="w-3.5 h-3.5 text-brand-400" />
                       Feedback Loop
                     </h5>
                     <p className="text-[10px] text-slate-500 mt-0.5">Help us learn and improve future recommendations.</p>

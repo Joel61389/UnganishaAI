@@ -8,7 +8,6 @@ import {
   ChevronDown, 
   ChevronUp, 
   MessageSquareShare,
-  Sparkles,
   Link2,
   Wallet,
   Coins,
@@ -186,7 +185,6 @@ export default function Matches() {
         </div>
       ) : matches.length === 0 ? (
         <div className="text-center py-16 rounded-2xl border border-dashed border-slate-800 p-8">
-          <Sparkles className="w-12 h-12 text-slate-600 mx-auto mb-4" />
           <h3 className="text-white font-semibold text-lg">No matches found yet</h3>
           <p className="text-slate-500 text-sm mt-1 max-w-md mx-auto">Make sure to complete the chatbot onboarding or fill out your profile details so the AI can run compatibility vectors.</p>
           <div className="mt-6 flex justify-center gap-4">
@@ -290,7 +288,6 @@ export default function Matches() {
                   className="flex items-center justify-between w-full px-5 py-2.5 bg-slate-900/20 border-t border-slate-850 text-xs text-slate-400 hover:text-white transition-all font-medium cursor-pointer"
                 >
                   <span className="flex items-center gap-1 text-slate-500">
-                    <Sparkles className="w-3.5 h-3.5 text-brand-400" />
                     Why did we match?
                   </span>
                   {isExpanded ? (

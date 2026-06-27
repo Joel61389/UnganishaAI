@@ -15,8 +15,8 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-parchment-white text-midnight-ink font-inter antialiased selection:bg-warm-sand overflow-x-hidden">
       {/* ══ NAVIGATION ═══════════════════════════════════════════════════════ */}
-      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 border-b ${scrolled ? 'bg-parchment-white/95 backdrop-blur-md border-ash-border py-3' : 'bg-transparent border-transparent py-4'}`}>
-        <div className="max-w-5xl mx-auto px-6 flex items-center justify-between">
+      <div className="fixed top-0 left-0 right-0 z-50 px-4 pt-3">
+        <nav className={`mx-auto max-w-4xl h-14 rounded-xl border px-5 flex items-center justify-between transition-all duration-300 ${scrolled ? 'bg-parchment-white/90 backdrop-blur-lg border-ash-border shadow-sm' : 'bg-parchment-white/60 backdrop-blur-md border-ash-border/50'}`}>
           {/* Logo Wordmark */}
           <div className="flex items-center gap-1.5">
             <span className="font-waldenburgfh font-bold text-sm tracking-[0.05em] text-midnight-ink">|| UNGANISHA</span>
@@ -45,20 +45,20 @@ export default function LandingPage() {
               />
             )}
           </div>
-        </div>
-      </nav>
+        </nav>
+      </div>
 
       {/* ══ HERO SECTION ══════════════════════════════════════════════════════ */}
-      <section className="relative pt-32 pb-24 border-b border-ash-border overflow-hidden">
+      <section className="relative pt-32 pb-24 lg:min-h-screen lg:flex lg:flex-col lg:justify-center border-b border-ash-border overflow-hidden">
         {/* Background Image with Muted Overlay */}
         <div className="absolute inset-0">
           <img 
             src="/unganisha-hero-img.jpg" 
             alt="Hero Background" 
-            className="w-full h-full object-cover opacity-35" 
+            className="w-full h-full object-cover opacity-60" 
           />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-b from-parchment-white/20 via-parchment-white/60 to-parchment-white" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-parchment-white/40 to-parchment-white" />
         
         {/* Content Container */}
         <div className="relative max-w-5xl mx-auto px-6 z-10">

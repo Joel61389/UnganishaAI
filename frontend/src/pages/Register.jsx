@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { 
-  Infinity, 
   User, 
   Mail, 
   Lock, 
@@ -12,7 +11,6 @@ import {
   Globe, 
   AlertCircle, 
   ArrowRight,
-  Sparkles,
   Wallet,
   X
 } from 'lucide-react';
@@ -62,10 +60,10 @@ export default function Register() {
 
   // Social providers config
   const socialProviders = [
-    { id: 'google',  label: 'Google',  Icon: GoogleIcon,  bg: 'hover:border-red-500/25 hover:bg-red-500/5' },
-    { id: 'github',  label: 'GitHub',  Icon: GitHubIcon,  bg: 'hover:border-slate-500/40 hover:bg-slate-800/60' },
-    { id: 'apple',   label: 'Apple',   Icon: AppleIcon,   bg: 'hover:border-slate-400/25 hover:bg-slate-800/40' },
-    { id: 'discord', label: 'Discord', Icon: DiscordIcon, bg: 'hover:border-indigo-500/30 hover:bg-indigo-500/5' },
+    { id: 'google',  label: 'Google',  Icon: GoogleIcon },
+    { id: 'github',  label: 'GitHub',  Icon: GitHubIcon },
+    { id: 'apple',   label: 'Apple',   Icon: AppleIcon },
+    { id: 'discord', label: 'Discord', Icon: DiscordIcon },
   ];
 
   const [formData, setFormData] = useState({
@@ -190,7 +188,7 @@ export default function Register() {
       if (res.success) {
         await new Promise(r => setTimeout(r, 1200));
         const regRes = await web3Register(res.address, formData, 'embedded', emailVal.trim());
-        regRes.success ? navigate('/chat') : setError(regRes.error);
+        regRes.success ? navigate('/dashboard') : setError(regRes.error);
       } else { setError(res.error); }
     } catch (e) {
       setError(e.message || 'Social registration failed.');
@@ -199,41 +197,45 @@ export default function Register() {
     }
   };
 
+  /* ── Shared input styles (design.md: inputs radius 4px, 1px border #e5e5e5) ── */
+  const inputClass = "block w-full pl-10 pr-4 py-3 bg-white border border-ash-border rounded-[4px] text-[14px] font-inter text-midnight-ink placeholder-fog focus:outline-none focus:border-midnight-ink transition-colors";
+  const inputIconClass = "absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-driftwood";
+  const labelClass = "text-[11px] font-inter font-medium text-driftwood uppercase tracking-[0.08em]";
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-40px)] px-4 py-8 sm:px-6 lg:px-8">
-      <div className="w-full max-w-2xl space-y-6 animate-fade-in">
-        {/* Brand Header */}
-        <div className="text-center space-y-2">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-tr from-brand-500 to-accent-500 shadow-xl shadow-brand-500/20">
-            <Infinity className="w-7 h-7 text-white" />
-          </div>
-          <h2 className="text-2xl font-extrabold tracking-tight text-white">
+    <div className="min-h-screen bg-parchment-white font-inter antialiased flex flex-col items-center justify-center px-4 py-12 sm:px-6">
+      <div className="w-full max-w-2xl space-y-8">
+        {/* ── Brand Header ──────────────────────────────────────────────── */}
+        <div className="text-center space-y-3">
+          <Link to="/" className="inline-block">
+            <span className="font-waldenburgfh font-bold text-[14px] tracking-[0.05em] text-midnight-ink">|| UNGANISHA</span>
+          </Link>
+          <h1 className="font-waldenburg text-[36px] font-light leading-[1.13] tracking-[-0.02em] text-midnight-ink">
             Create your account
-          </h2>
-          <p className="text-sm text-slate-400">
+          </h1>
+          <p className="text-[14px] text-driftwood font-inter leading-relaxed">
             Join the Kenyan startup matchmaking ecosystem
           </p>
         </div>
 
-        {/* Mode Selector Tab */}
-        <div className="flex p-1 bg-slate-900/60 rounded-xl border border-slate-800/80">
+        {/* ── Mode Selector Tab (design.md: rounded tab badges) ─────── */}
+        <div className="flex p-1 bg-warm-sand rounded-[20px] border border-ash-border">
           <button
             onClick={() => { setAuthMode('thirdweb'); setError(''); }}
-            className={`flex-1 py-2 text-xs font-bold rounded-lg flex items-center justify-center gap-1.5 transition-all ${
+            className={`flex-1 py-2.5 text-[13px] font-inter font-medium rounded-[18px] flex items-center justify-center gap-2 transition-all cursor-pointer ${
               authMode === 'thirdweb'
-                ? 'bg-brand-500/15 text-brand-300 border border-brand-500/30'
-                : 'text-slate-400 hover:text-slate-200'
+                ? 'bg-white text-midnight-ink shadow-[rgba(0,0,0,0.075)_0px_0px_0px_0.5px_inset]'
+                : 'text-driftwood hover:text-midnight-ink'
             }`}
           >
-            <Sparkles className="w-3.5 h-3.5" />
             Thirdweb / Social
           </button>
           <button
             onClick={() => { setAuthMode('standard'); setError(''); }}
-            className={`flex-1 py-2 text-xs font-bold rounded-lg flex items-center justify-center gap-1.5 transition-all ${
+            className={`flex-1 py-2.5 text-[13px] font-inter font-medium rounded-[18px] flex items-center justify-center gap-2 transition-all cursor-pointer ${
               authMode === 'standard'
-                ? 'bg-slate-800 border border-slate-700/50 text-slate-200'
-                : 'text-slate-400 hover:text-slate-200'
+                ? 'bg-white text-midnight-ink shadow-[rgba(0,0,0,0.075)_0px_0px_0px_0.5px_inset]'
+                : 'text-driftwood hover:text-midnight-ink'
             }`}
           >
             <Mail className="w-3.5 h-3.5" />
@@ -241,26 +243,24 @@ export default function Register() {
           </button>
         </div>
 
-        {/* Form Panel */}
-        <div className="p-8 rounded-3xl glass-panel-glow border-slate-800">
+        {/* ── Form Panel (design.md: warm-sand card, radius 20px) ───── */}
+        <div className="p-6 sm:p-8 rounded-[20px] bg-warm-sand">
           {error && (
-            <div className="flex items-center gap-2 p-3 mb-5 text-xs font-semibold rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/20 animate-fade-in">
+            <div className="flex items-center gap-2.5 p-3.5 mb-6 text-[13px] font-inter font-medium rounded-[8px] bg-white text-midnight-ink border border-ash-border">
               <AlertCircle className="w-4 h-4 shrink-0" />
               <span>{error}</span>
             </div>
           )}
 
           {authMode === 'thirdweb' ? (
-            /* Thirdweb Web3 Registration Panel */
+            /* ── Thirdweb Web3 Registration Panel ────────────────────── */
             <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 {/* Name */}
-                <div className="space-y-1.5">
-                  <label className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Full Name *</label>
+                <div className="space-y-2">
+                  <label className={labelClass}>Full Name *</label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                      <User className="w-4 h-4 text-slate-500" />
-                    </div>
+                    <div className={inputIconClass}><User className="w-4 h-4" /></div>
                     <input
                       name="name"
                       type="text"
@@ -268,19 +268,19 @@ export default function Register() {
                       value={formData.name}
                       onChange={handleChange}
                       placeholder="e.g. Amani Mwangi"
-                      className="block w-full pl-9 pr-4 py-2.5 bg-slate-950/40 border border-slate-800 rounded-xl text-sm text-white placeholder-slate-650 focus:outline-none focus:border-brand-500"
+                      className={inputClass}
                     />
                   </div>
                 </div>
 
                 {/* Role SELECT */}
-                <div className="space-y-1.5">
-                  <label className="text-xs text-slate-400 font-semibold uppercase tracking-wider font-medium">Ecosystem Role *</label>
+                <div className="space-y-2">
+                  <label className={labelClass}>Ecosystem Role *</label>
                   <select
                     name="role"
                     value={formData.role}
                     onChange={handleChange}
-                    className="block w-full px-4 py-2.5 bg-slate-950/40 border border-slate-800 rounded-xl text-sm text-white focus:outline-none focus:border-brand-500"
+                    className="block w-full px-4 py-3 bg-white border border-ash-border rounded-[4px] text-[14px] font-inter text-midnight-ink focus:outline-none focus:border-midnight-ink transition-colors cursor-pointer"
                   >
                     <option value="Developer">Developer</option>
                     <option value="Founder">Founder</option>
@@ -291,59 +291,56 @@ export default function Register() {
                 </div>
 
                 {/* Location */}
-                <div className="space-y-1.5">
-                  <label className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Location / City</label>
+                <div className="space-y-2">
+                  <label className={labelClass}>Location / City</label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                      <MapPin className="w-4 h-4 text-slate-500" />
-                    </div>
+                    <div className={inputIconClass}><MapPin className="w-4 h-4" /></div>
                     <input
                       name="location"
                       type="text"
                       value={formData.location}
                       onChange={handleChange}
                       placeholder="e.g. Nairobi, Kenya"
-                      className="block w-full pl-9 pr-4 py-2.5 bg-slate-950/40 border border-slate-800 rounded-xl text-sm text-white placeholder-slate-650 focus:outline-none focus:border-brand-500"
+                      className={inputClass}
                     />
                   </div>
                 </div>
 
                 {/* Organization */}
-                <div className="space-y-1.5">
-                  <label className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Organization / Company</label>
+                <div className="space-y-2">
+                  <label className={labelClass}>Organization / Company</label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                      <Building2 className="w-4 h-4 text-slate-500" />
-                    </div>
+                    <div className={inputIconClass}><Building2 className="w-4 h-4" /></div>
                     <input
                       name="organization"
                       type="text"
                       value={formData.organization}
                       onChange={handleChange}
                       placeholder="e.g. AgriKe Startup"
-                      className="block w-full pl-9 pr-4 py-2.5 bg-slate-950/40 border border-slate-800 rounded-xl text-sm text-white placeholder-slate-650 focus:outline-none focus:border-brand-500"
+                      className={inputClass}
                     />
                   </div>
                 </div>
               </div>
 
-              <div className="relative flex items-center justify-center py-2">
-                <div className="absolute inset-x-0 h-px bg-slate-800"></div>
-                <span className="relative px-3 bg-slate-950 text-[10px] text-slate-500 font-bold uppercase tracking-wider">Sign Up with Social Account</span>
+              {/* ── Divider ───────────────────────────────────────────── */}
+              <div className="relative flex items-center justify-center py-1">
+                <div className="absolute inset-x-0 h-px bg-ash-border"></div>
+                <span className="relative px-4 bg-warm-sand text-[10px] text-fog font-inter font-medium uppercase tracking-[0.1em]">Sign Up with Social Account</span>
               </div>
 
-              {/* Social Providers Grid */}
+              {/* ── Social Providers Grid ─────────────────────────────── */}
               <div className="grid grid-cols-2 gap-3">
-                {socialProviders.map(({ id, label, Icon, bg }) => (
+                {socialProviders.map(({ id, label, Icon }) => (
                   <button
                     key={id}
                     type="button"
                     disabled={!!socialLoadingType || web3Loading}
                     onClick={() => handleSocialClick(id)}
-                    className={`flex items-center justify-center gap-2 py-2.5 px-3 bg-slate-950 border border-slate-800 ${bg} text-xs font-semibold text-slate-300 hover:text-white rounded-xl transition-all disabled:opacity-50 cursor-pointer`}
+                    className="flex items-center justify-center gap-2.5 py-3 px-4 bg-white border border-ash-border hover:border-midnight-ink/30 text-[13px] font-inter font-medium text-midnight-ink rounded-full transition-all disabled:opacity-40 cursor-pointer shadow-[rgba(0,0,0,0.06)_0px_0px_0px_1px,rgba(0,0,0,0.04)_0px_1px_2px_0px]"
                   >
                     {socialLoadingType === id ? (
-                      <div className="w-3.5 h-3.5 border-2 border-slate-500/30 border-t-slate-400 rounded-full animate-spin" />
+                      <div className="w-4 h-4 border-2 border-ash-border border-t-midnight-ink rounded-full animate-spin" />
                     ) : (
                       <Icon />
                     )}
@@ -352,161 +349,158 @@ export default function Register() {
                 ))}
               </div>
 
-                {/* Social Email Modal */}
-                {socialModalOpen && (
-                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in" onClick={() => setSocialModalOpen(false)}>
-                    <div className="w-full max-w-sm mx-4 p-6 rounded-2xl bg-slate-900 border border-slate-700/60 shadow-2xl space-y-4" onClick={e => e.stopPropagation()}>
-                      <div className="flex items-center justify-between">
-                        <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                          {socialProviders.find(p => p.id === selectedProvider)?.Icon && (
-                            <span>{React.createElement(socialProviders.find(p => p.id === selectedProvider).Icon)}</span>
-                          )}
-                          Register with {selectedProvider?.charAt(0).toUpperCase() + selectedProvider?.slice(1)}
-                        </h3>
-                        <button onClick={() => setSocialModalOpen(false)} className="text-slate-400 hover:text-white transition-colors cursor-pointer">
-                          <X className="w-4 h-4" />
-                        </button>
-                      </div>
-                      <p className="text-xs text-slate-400">Enter the email address associated with your {selectedProvider?.charAt(0).toUpperCase() + selectedProvider?.slice(1)} account.</p>
-                      <div className="relative">
-                        <div className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none">
-                          <Mail className="w-4 h-4 text-slate-500" />
-                        </div>
-                        <input
-                          type="email"
-                          value={socialEmail}
-                          onChange={e => setSocialEmail(e.target.value)}
-                          onKeyDown={e => { if (e.key === 'Enter' && socialEmail.trim()) handleSocialRegister(selectedProvider, socialEmail); }}
-                          placeholder="you@example.com"
-                          autoFocus
-                          className="block w-full pl-10 pr-4 py-3 bg-slate-950/60 border border-slate-700 rounded-xl text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500/30 text-white placeholder-slate-600"
-                        />
-                      </div>
-                      <button
-                        type="button"
-                        disabled={!socialEmail.trim() || !socialEmail.includes('@')}
-                        onClick={() => handleSocialRegister(selectedProvider, socialEmail)}
-                        className="w-full flex justify-center items-center gap-1.5 py-3 px-4 bg-gradient-to-r from-brand-600 to-brand-700 hover:from-brand-500 hover:to-brand-600 text-xs font-bold text-white rounded-xl shadow-lg transition-all disabled:opacity-50 cursor-pointer"
-                      >
-                        Continue <ArrowRight className="w-4 h-4" />
+              {/* ── Social Email Modal ────────────────────────────────── */}
+              {socialModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-midnight-ink/40 backdrop-blur-sm" onClick={() => setSocialModalOpen(false)}>
+                  <div className="w-full max-w-sm mx-4 p-6 rounded-[20px] bg-parchment-white border border-ash-border shadow-[rgba(0,0,0,0.4)_0px_0px_1px_0px,rgba(0,0,0,0.04)_0px_1px_1px_0px,rgba(0,0,0,0.04)_0px_2px_4px_0px] space-y-5" onClick={e => e.stopPropagation()}>
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-[15px] font-inter font-medium text-midnight-ink flex items-center gap-2">
+                        {socialProviders.find(p => p.id === selectedProvider)?.Icon && (
+                          <span>{React.createElement(socialProviders.find(p => p.id === selectedProvider).Icon)}</span>
+                        )}
+                        Register with {selectedProvider?.charAt(0).toUpperCase() + selectedProvider?.slice(1)}
+                      </h3>
+                      <button onClick={() => setSocialModalOpen(false)} className="text-driftwood hover:text-midnight-ink transition-colors cursor-pointer">
+                        <X className="w-4 h-4" />
                       </button>
                     </div>
+                    <p className="text-[13px] text-driftwood font-inter">Enter the email address associated with your {selectedProvider?.charAt(0).toUpperCase() + selectedProvider?.slice(1)} account.</p>
+                    <div className="relative">
+                      <div className={inputIconClass}><Mail className="w-4 h-4" /></div>
+                      <input
+                        type="email"
+                        value={socialEmail}
+                        onChange={e => setSocialEmail(e.target.value)}
+                        onKeyDown={e => { if (e.key === 'Enter' && socialEmail.trim()) handleSocialRegister(selectedProvider, socialEmail); }}
+                        placeholder="you@example.com"
+                        autoFocus
+                        className={inputClass}
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      disabled={!socialEmail.trim() || !socialEmail.includes('@')}
+                      onClick={() => handleSocialRegister(selectedProvider, socialEmail)}
+                      className="w-full flex justify-center items-center gap-2 py-3 px-4 bg-midnight-ink text-white text-[14px] font-inter font-medium rounded-full hover:opacity-90 transition-all disabled:opacity-40 cursor-pointer"
+                    >
+                      Continue <ArrowRight className="w-4 h-4" />
+                    </button>
                   </div>
-                )}
+                </div>
+              )}
 
+              {/* ── Divider ───────────────────────────────────────────── */}
               <div className="relative flex items-center justify-center">
-                <div className="absolute inset-x-0 h-px bg-slate-800" />
-                <span className="relative px-3 bg-slate-950 text-[10px] text-slate-500 font-bold uppercase tracking-wider">Or Register with Email OTP</span>
+                <div className="absolute inset-x-0 h-px bg-ash-border" />
+                <span className="relative px-4 bg-warm-sand text-[10px] text-fog font-inter font-medium uppercase tracking-[0.1em]">Or Register with Email OTP</span>
               </div>
 
-              {/* Email OTP Field */}
-              <div className="space-y-1.5">
-                <label className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Email Address</label>
+              {/* ── Email OTP Field ───────────────────────────────────── */}
+              <div className="space-y-2">
+                <label className={labelClass}>Email Address</label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none">
-                    <Mail className="w-4 h-4 text-slate-500" />
-                  </div>
+                  <div className={inputIconClass}><Mail className="w-4 h-4" /></div>
                   <input
                     type="email"
                     value={web3Email}
                     onChange={(e) => setWeb3Email(e.target.value)}
                     placeholder="amani@domain.com"
                     disabled={web3Loading || magicLinkSent}
-                    className="block w-full pl-10 pr-4 py-3 bg-slate-950/40 border border-slate-850 rounded-xl text-sm focus:outline-none focus:border-brand-500 text-white placeholder-slate-600 disabled:opacity-50"
+                    className={`${inputClass} disabled:opacity-50`}
                   />
                 </div>
               </div>
 
               {magicLinkSent ? (
-                <div className="p-4 rounded-xl bg-brand-500/5 border border-brand-500/10 space-y-2 text-center animate-fade-in">
-                  <Sparkles className="w-6 h-6 text-brand-400 mx-auto mb-1 animate-bounce" />
-                  <h6 className="text-xs font-bold text-white">Generating Embedded Wallet...</h6>
-                  <p className="text-[10px] text-slate-400">Verifying security parameters. Click the link sent to your email to authenticate.</p>
+                <div className="p-5 rounded-[20px] bg-white border border-ash-border space-y-2 text-center">
+                  <h6 className="text-[13px] font-inter font-medium text-midnight-ink">Generating Embedded Wallet...</h6>
+                  <p className="text-[11px] text-driftwood font-inter">Verifying security parameters. Click the link sent to your email to authenticate.</p>
                 </div>
               ) : (
                 <button
                   type="button"
                   disabled={web3Loading || !web3Email || !formData.name}
                   onClick={() => handleThirdwebRegister('email')}
-                  className="w-full flex justify-center items-center gap-1.5 py-3 px-4 bg-gradient-to-r from-brand-600 to-brand-700 hover:from-brand-500 hover:to-brand-600 text-xs font-bold text-white rounded-xl shadow-lg transition-all disabled:opacity-50"
+                  className="w-full flex justify-center items-center gap-2 py-3 px-4 bg-midnight-ink text-white text-[14px] font-inter font-medium rounded-full hover:opacity-90 transition-all disabled:opacity-40 cursor-pointer"
                 >
                   {web3Loading ? 'Processing...' : 'Register with Thirdweb Email OTP'}
                   {!web3Loading && <ArrowRight className="w-4 h-4" />}
                 </button>
               )}
 
-              <div className="relative flex items-center justify-center py-2">
-                <div className="absolute inset-x-0 h-px bg-slate-800"></div>
-                <span className="relative px-3 bg-slate-950 text-[10px] text-slate-500 font-bold uppercase tracking-wider">Web3 Wallets</span>
+              {/* ── Divider ───────────────────────────────────────────── */}
+              <div className="relative flex items-center justify-center py-1">
+                <div className="absolute inset-x-0 h-px bg-ash-border"></div>
+                <span className="relative px-4 bg-warm-sand text-[10px] text-fog font-inter font-medium uppercase tracking-[0.1em]">Web3 Wallets</span>
               </div>
 
               <button
                 type="button"
                 disabled={web3Loading}
                 onClick={() => handleThirdwebRegister('metamask')}
-                className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-slate-900/40 hover:bg-slate-900 border border-slate-800 hover:border-slate-700/60 text-xs font-bold text-slate-300 hover:text-white rounded-xl shadow-md transition-all disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-2.5 py-3 px-4 bg-white text-midnight-ink border border-ash-border hover:border-midnight-ink/30 text-[13px] font-inter font-medium rounded-full transition-all disabled:opacity-40 cursor-pointer shadow-[rgba(0,0,0,0.06)_0px_0px_0px_1px,rgba(0,0,0,0.04)_0px_1px_2px_0px]"
               >
-                <Wallet className="w-4 h-4 text-amber-500" />
+                <Wallet className="w-4 h-4" />
                 Connect External Wallet (Core / Metamask)
               </button>
             </div>
           ) : (
-            /* Standard Registration Form */
+            /* ── Standard Registration Form ──────────────────────────── */
             <form className="space-y-6" onSubmit={handleSubmit}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 {/* Name */}
-                <div className="space-y-1.5">
-                  <label className="text-xs text-slate-400 font-semibold uppercase tracking-wider font-medium">Full Name *</label>
+                <div className="space-y-2">
+                  <label className={labelClass}>Full Name *</label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"><User className="w-4 h-4 text-slate-500" /></div>
-                    <input name="name" type="text" required value={formData.name} onChange={handleChange} placeholder="e.g. Amani Mwangi" className="block w-full pl-9 pr-4 py-2.5 bg-slate-950/40 border border-slate-800 rounded-xl text-sm text-white placeholder-slate-650 focus:outline-none focus:border-brand-500" />
+                    <div className={inputIconClass}><User className="w-4 h-4" /></div>
+                    <input name="name" type="text" required value={formData.name} onChange={handleChange} placeholder="e.g. Amani Mwangi" className={inputClass} />
                   </div>
                 </div>
 
                 {/* Email */}
-                <div className="space-y-1.5">
-                  <label className="text-xs text-slate-400 font-semibold uppercase tracking-wider font-medium">Email Address *</label>
+                <div className="space-y-2">
+                  <label className={labelClass}>Email Address *</label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"><Mail className="w-4 h-4 text-slate-500" /></div>
-                    <input name="email" type="email" required value={formData.email} onChange={handleChange} placeholder="e.g. amani@dev.ke" className="block w-full pl-9 pr-4 py-2.5 bg-slate-950/40 border border-slate-800 rounded-xl text-sm text-white placeholder-slate-650 focus:outline-none focus:border-brand-500" />
+                    <div className={inputIconClass}><Mail className="w-4 h-4" /></div>
+                    <input name="email" type="email" required value={formData.email} onChange={handleChange} placeholder="e.g. amani@dev.ke" className={inputClass} />
                   </div>
                 </div>
 
                 {/* Password */}
-                <div className="space-y-1.5">
-                  <label className="text-xs text-slate-400 font-semibold uppercase tracking-wider font-medium">Password *</label>
+                <div className="space-y-2">
+                  <label className={labelClass}>Password *</label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"><Lock className="w-4 h-4 text-slate-500" /></div>
-                    <input name="password" type="password" required value={formData.password} onChange={handleChange} placeholder="••••••••" className="block w-full pl-9 pr-4 py-2.5 bg-slate-950/40 border border-slate-800 rounded-xl text-sm text-white placeholder-slate-650 focus:outline-none focus:border-brand-500" />
+                    <div className={inputIconClass}><Lock className="w-4 h-4" /></div>
+                    <input name="password" type="password" required value={formData.password} onChange={handleChange} placeholder="••••••••" className={inputClass} />
                   </div>
                 </div>
 
                 {/* Phone */}
-                <div className="space-y-1.5">
-                  <label className="text-xs text-slate-400 font-semibold uppercase tracking-wider font-medium">Phone Number</label>
+                <div className="space-y-2">
+                  <label className={labelClass}>Phone Number</label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"><Phone className="w-4 h-4 text-slate-500" /></div>
-                    <input name="phone" type="text" value={formData.phone} onChange={handleChange} placeholder="e.g. +254 712 345678" className="block w-full pl-9 pr-4 py-2.5 bg-slate-950/40 border border-slate-800 rounded-xl text-sm text-white placeholder-slate-650 focus:outline-none focus:border-brand-500" />
+                    <div className={inputIconClass}><Phone className="w-4 h-4" /></div>
+                    <input name="phone" type="text" value={formData.phone} onChange={handleChange} placeholder="e.g. +254 712 345678" className={inputClass} />
                   </div>
                 </div>
 
                 {/* Organization */}
-                <div className="space-y-1.5">
-                  <label className="text-xs text-slate-400 font-semibold uppercase tracking-wider font-medium">Organization / Company</label>
+                <div className="space-y-2">
+                  <label className={labelClass}>Organization / Company</label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"><Building2 className="w-4 h-4 text-slate-500" /></div>
-                    <input name="organization" type="text" value={formData.organization} onChange={handleChange} placeholder="e.g. MiniHack Org" className="block w-full pl-9 pr-4 py-2.5 bg-slate-950/40 border border-slate-800 rounded-xl text-sm text-white placeholder-slate-650 focus:outline-none focus:border-brand-500" />
+                    <div className={inputIconClass}><Building2 className="w-4 h-4" /></div>
+                    <input name="organization" type="text" value={formData.organization} onChange={handleChange} placeholder="e.g. MiniHack Org" className={inputClass} />
                   </div>
                 </div>
 
                 {/* Role SELECT */}
-                <div className="space-y-1.5">
-                  <label className="text-xs text-slate-400 font-semibold uppercase tracking-wider font-medium font-medium">Platform Role *</label>
+                <div className="space-y-2">
+                  <label className={labelClass}>Platform Role *</label>
                   <select
                     name="role"
                     value={formData.role}
                     onChange={handleChange}
-                    className="block w-full px-4 py-2.5 bg-slate-950/40 border border-slate-800 rounded-xl text-sm text-white focus:outline-none focus:border-brand-500"
+                    className="block w-full px-4 py-3 bg-white border border-ash-border rounded-[4px] text-[14px] font-inter text-midnight-ink focus:outline-none focus:border-midnight-ink transition-colors cursor-pointer"
                   >
                     <option value="Developer">Developer</option>
                     <option value="Founder">Founder</option>
@@ -517,29 +511,29 @@ export default function Register() {
                 </div>
 
                 {/* Location */}
-                <div className="space-y-1.5">
-                  <label className="text-xs text-slate-400 font-semibold uppercase tracking-wider font-medium font-medium">Location / City</label>
+                <div className="space-y-2">
+                  <label className={labelClass}>Location / City</label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"><MapPin className="w-4 h-4 text-slate-500" /></div>
-                    <input name="location" type="text" value={formData.location} onChange={handleChange} placeholder="e.g. Nairobi, Kenya" className="block w-full pl-9 pr-4 py-2.5 bg-slate-950/40 border border-slate-800 rounded-xl text-sm text-white placeholder-slate-650 focus:outline-none focus:border-brand-500" />
+                    <div className={inputIconClass}><MapPin className="w-4 h-4" /></div>
+                    <input name="location" type="text" value={formData.location} onChange={handleChange} placeholder="e.g. Nairobi, Kenya" className={inputClass} />
                   </div>
                 </div>
 
                 {/* LinkedIn */}
-                <div className="space-y-1.5">
-                  <label className="text-xs text-slate-400 font-semibold uppercase tracking-wider font-medium font-medium">LinkedIn Profile URL</label>
+                <div className="space-y-2">
+                  <label className={labelClass}>LinkedIn Profile URL</label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"><Globe className="w-4 h-4 text-slate-500" /></div>
-                    <input name="linkedin" type="text" value={formData.linkedin} onChange={handleChange} placeholder="https://linkedin.com/in/..." className="block w-full pl-9 pr-4 py-2.5 bg-slate-950/40 border border-slate-800 rounded-xl text-sm text-white placeholder-slate-650 focus:outline-none focus:border-brand-500" />
+                    <div className={inputIconClass}><Globe className="w-4 h-4" /></div>
+                    <input name="linkedin" type="text" value={formData.linkedin} onChange={handleChange} placeholder="https://linkedin.com/in/..." className={inputClass} />
                   </div>
                 </div>
 
                 {/* GitHub */}
-                <div className="grid col-span-1 md:col-span-2 space-y-1.5">
-                  <label className="text-xs text-slate-400 font-semibold uppercase tracking-wider font-medium font-medium">GitHub Profile URL</label>
+                <div className="grid col-span-1 md:col-span-2 space-y-2">
+                  <label className={labelClass}>GitHub Profile URL</label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"><Globe className="w-4 h-4 text-slate-500" /></div>
-                    <input name="github" type="text" value={formData.github} onChange={handleChange} placeholder="https://github.com/..." className="block w-full pl-9 pr-4 py-2.5 bg-slate-950/40 border border-slate-800 rounded-xl text-sm text-white placeholder-slate-650 focus:outline-none focus:border-brand-500" />
+                    <div className={inputIconClass}><Globe className="w-4 h-4" /></div>
+                    <input name="github" type="text" value={formData.github} onChange={handleChange} placeholder="https://github.com/..." className={inputClass} />
                   </div>
                 </div>
               </div>
@@ -547,7 +541,7 @@ export default function Register() {
               <button
                 type="submit"
                 disabled={loading}
-                className="group relative w-full flex justify-center items-center gap-1.5 py-3 px-4 bg-gradient-to-r from-brand-600 to-brand-700 hover:from-brand-500 hover:to-brand-600 text-xs font-bold text-white rounded-xl shadow-lg transition-all disabled:opacity-50"
+                className="group relative w-full flex justify-center items-center gap-2 py-3 px-4 bg-midnight-ink text-white text-[14px] font-inter font-medium rounded-full hover:opacity-90 transition-all disabled:opacity-40 cursor-pointer"
               >
                 {loading ? 'Registering...' : 'Register'}
                 {!loading && <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />}
@@ -556,10 +550,10 @@ export default function Register() {
           )}
         </div>
 
-        {/* Footer info */}
-        <p className="text-center text-xs text-slate-500">
+        {/* ── Footer link ─────────────────────────────────────────────── */}
+        <p className="text-center text-[13px] text-driftwood font-inter">
           Already have an account?{' '}
-          <Link to="/login" className="font-semibold text-brand-400 hover:text-brand-350 transition-colors">
+          <Link to="/login" className="font-medium text-midnight-ink hover:opacity-70 transition-opacity">
             Sign in here
           </Link>
         </p>

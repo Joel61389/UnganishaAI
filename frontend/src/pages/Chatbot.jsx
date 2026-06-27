@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
-import { Send, Sparkles, CheckCircle2, ChevronRight } from 'lucide-react';
+import { Send, CheckCircle2, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function Chatbot() {
@@ -104,7 +104,6 @@ export default function Chatbot() {
       <div className="flex items-center justify-between pb-4 border-b border-slate-800">
         <div>
           <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-            <Sparkles className="w-6 h-6 text-brand-400" />
             AI Onboarding Assistant
           </h2>
           <p className="text-slate-400 text-sm mt-0.5">Let's discover your expertise and map your startup matches.</p>

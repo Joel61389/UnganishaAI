@@ -9,7 +9,6 @@ import {
   ArrowRight, 
   Wallet, 
   Send, 
-  Sparkles,
   X
 } from 'lucide-react';
 
@@ -64,7 +63,7 @@ export default function Login() {
     setError(''); setLoading(true);
     const result = await login(email, password);
     setLoading(false);
-    result.success ? navigate('/') : setError(result.error);
+    result.success ? navigate('/dashboard') : setError(result.error);
   };
 
   /* ── Thirdweb / Web3 auth ───────────────────────────────────────────────── */
@@ -79,7 +78,7 @@ export default function Login() {
         setTimeout(async () => {
           if (res.success) {
             const lr = await web3Login(res.address, 'embedded');
-            lr.success ? navigate('/') : setError(lr.error);
+            lr.success ? navigate('/dashboard') : setError(lr.error);
           } else { setError(res.error); }
           setWeb3Loading(false);
         }, 2000);
@@ -89,7 +88,7 @@ export default function Login() {
       res = await connectWallet();
       if (res.success) {
         const lr = await web3Login(res.address, 'metamask');
-        lr.success ? navigate('/') : setError(lr.error);
+        lr.success ? navigate('/dashboard') : setError(lr.error);
       } else { setError(res.error); }
     } catch (e) { setError(e.message || 'Web3 Login failed.'); }
     finally { if (type !== 'email') setWeb3Loading(false); }
@@ -121,7 +120,7 @@ export default function Login() {
       if (res.success) {
         await new Promise(r => setTimeout(r, 1200)); // UX delay
         const lr = await web3Login(res.address, 'embedded', emailVal.trim());
-        lr.success ? navigate('/') : setError(lr.error);
+        lr.success ? navigate('/dashboard') : setError(lr.error);
       } else { 
         setError(res.error); 
       }
@@ -134,44 +133,52 @@ export default function Login() {
 
   /* ── Social providers config ────────────────────────────────────────────── */
   const socialProviders = [
-    { id: 'google',  label: 'Google',  Icon: GoogleIcon,  bg: 'hover:border-red-500/25 hover:bg-red-500/5' },
-    { id: 'github',  label: 'GitHub',  Icon: GitHubIcon,  bg: 'hover:border-slate-500/40 hover:bg-slate-800/60' },
-    { id: 'apple',   label: 'Apple',   Icon: AppleIcon,   bg: 'hover:border-slate-400/25 hover:bg-slate-800/40' },
-    { id: 'discord', label: 'Discord', Icon: DiscordIcon, bg: 'hover:border-indigo-500/30 hover:bg-indigo-500/5' },
+    { id: 'google',  label: 'Google',  Icon: GoogleIcon },
+    { id: 'github',  label: 'GitHub',  Icon: GitHubIcon },
+    { id: 'apple',   label: 'Apple',   Icon: AppleIcon },
+    { id: 'discord', label: 'Discord', Icon: DiscordIcon },
   ];
 
+  /* ── Shared input styles (design.md: inputs radius 4px, 1px border #e5e5e5) ── */
+  const inputClass = "block w-full pl-10 pr-4 py-3 bg-white border border-ash-border rounded-[4px] text-[14px] font-inter text-midnight-ink placeholder-fog focus:outline-none focus:border-midnight-ink transition-colors";
+  const inputIconClass = "absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-driftwood";
+  const labelClass = "text-[11px] font-inter font-medium text-driftwood uppercase tracking-[0.08em]";
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-40px)] px-4 py-12 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md space-y-6 animate-fade-in">
+    <div className="min-h-screen bg-parchment-white font-inter antialiased flex flex-col items-center justify-center px-4 py-12 sm:px-6">
+      <div className="w-full max-w-md space-y-8">
 
         {/* Brand Header */}
-        <div className="text-center space-y-2">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-tr from-brand-500 to-accent-500 shadow-xl shadow-brand-500/20 mb-1">
-            <Infinity className="w-7 h-7 text-white" />
-          </div>
-          <h2 className="text-2xl font-extrabold tracking-tight text-white">Welcome to Unganisha AI</h2>
-          <p className="text-sm text-slate-400">AI matchmaking for the Kenyan startup ecosystem</p>
+        <div className="text-center space-y-3">
+          <Link to="/" className="inline-block">
+            <span className="font-waldenburgfh font-bold text-[14px] tracking-[0.05em] text-midnight-ink">|| UNGANISHA</span>
+          </Link>
+          <h1 className="font-waldenburg text-[36px] font-light leading-[1.13] tracking-[-0.02em] text-midnight-ink">
+            Welcome to Unganisha AI
+          </h1>
+          <p className="text-[14px] text-driftwood font-inter leading-relaxed">
+            AI matchmaking for the Kenyan startup ecosystem
+          </p>
         </div>
 
         {/* Mode Tab */}
-        <div className="flex p-1 bg-slate-900/60 rounded-xl border border-slate-800/80">
+        <div className="flex p-1 bg-warm-sand rounded-[20px] border border-ash-border">
           <button
             onClick={() => { setAuthMode('thirdweb'); setError(''); }}
-            className={`flex-1 py-2 text-xs font-bold rounded-lg flex items-center justify-center gap-1.5 transition-all ${
+            className={`flex-1 py-2.5 text-[13px] font-inter font-medium rounded-[18px] flex items-center justify-center gap-2 transition-all cursor-pointer ${
               authMode === 'thirdweb'
-                ? 'bg-brand-500/15 text-brand-300 border border-brand-500/30'
-                : 'text-slate-400 hover:text-slate-200'
+                ? 'bg-white text-midnight-ink shadow-[rgba(0,0,0,0.075)_0px_0px_0px_0.5px_inset]'
+                : 'text-driftwood hover:text-midnight-ink'
             }`}
           >
-            <Sparkles className="w-3.5 h-3.5" />
             Thirdweb / Social
           </button>
           <button
             onClick={() => { setAuthMode('standard'); setError(''); }}
-            className={`flex-1 py-2 text-xs font-bold rounded-lg flex items-center justify-center gap-1.5 transition-all ${
+            className={`flex-1 py-2.5 text-[13px] font-inter font-medium rounded-[18px] flex items-center justify-center gap-2 transition-all cursor-pointer ${
               authMode === 'standard'
-                ? 'bg-slate-800 border border-slate-700/50 text-slate-200'
-                : 'text-slate-400 hover:text-slate-200'
+                ? 'bg-white text-midnight-ink shadow-[rgba(0,0,0,0.075)_0px_0px_0px_0.5px_inset]'
+                : 'text-driftwood hover:text-midnight-ink'
             }`}
           >
             <Mail className="w-3.5 h-3.5" />
@@ -180,32 +187,33 @@ export default function Login() {
         </div>
 
         {/* Panel */}
-        <div className="p-8 rounded-3xl glass-panel-glow border-slate-800">
+        <div className="p-6 sm:p-8 rounded-[20px] bg-warm-sand">
           {error && (
-            <div className="flex items-center gap-2 p-3 mb-5 text-xs font-semibold rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/20 animate-fade-in">
-              <AlertCircle className="w-4 h-4 shrink-0" /><span>{error}</span>
+            <div className="flex items-center gap-2.5 p-3.5 mb-6 text-[13px] font-inter font-medium rounded-[8px] bg-white text-midnight-ink border border-ash-border">
+              <AlertCircle className="w-4 h-4 shrink-0" />
+              <span>{error}</span>
             </div>
           )}
 
           {authMode === 'thirdweb' ? (
-            <div className="space-y-5">
+            <div className="space-y-6">
 
               {/* ── Social Buttons Grid ─────────────────────────────────── */}
               <div>
-                <span className="block text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-3">
+                <span className="block text-[11px] font-inter font-medium text-driftwood uppercase tracking-[0.08em] mb-3">
                   Sign in with Social Account
                 </span>
                 <div className="grid grid-cols-2 gap-3">
-                  {socialProviders.map(({ id, label, Icon, bg }) => (
+                  {socialProviders.map(({ id, label, Icon }) => (
                     <button
                       key={id}
                       type="button"
                       disabled={!!socialLoadingType || web3Loading}
                       onClick={() => handleSocialClick(id)}
-                      className={`flex items-center justify-center gap-2 py-2.5 px-3 bg-slate-950 border border-slate-800 ${bg} text-xs font-semibold text-slate-300 hover:text-white rounded-xl transition-all disabled:opacity-50 cursor-pointer`}
+                      className="flex items-center justify-center gap-2.5 py-3 px-4 bg-white border border-ash-border hover:border-midnight-ink/30 text-[13px] font-inter font-medium text-midnight-ink rounded-full transition-all disabled:opacity-40 cursor-pointer shadow-[rgba(0,0,0,0.06)_0px_0px_0px_1px,rgba(0,0,0,0.04)_0px_1px_2px_0px]"
                     >
                       {socialLoadingType === id ? (
-                        <div className="w-3.5 h-3.5 border-2 border-slate-500/30 border-t-slate-400 rounded-full animate-spin" />
+                        <div className="w-4 h-4 border-2 border-ash-border border-t-midnight-ink rounded-full animate-spin" />
                       ) : (
                         <Icon />
                       )}
@@ -216,24 +224,22 @@ export default function Login() {
 
                 {/* Social Email Modal */}
                 {socialModalOpen && (
-                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in" onClick={() => setSocialModalOpen(false)}>
-                    <div className="w-full max-w-sm mx-4 p-6 rounded-2xl bg-slate-900 border border-slate-700/60 shadow-2xl space-y-4" onClick={e => e.stopPropagation()}>
+                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-midnight-ink/40 backdrop-blur-sm" onClick={() => setSocialModalOpen(false)}>
+                    <div className="w-full max-w-sm mx-4 p-6 rounded-[20px] bg-parchment-white border border-ash-border shadow-[rgba(0,0,0,0.4)_0px_0px_1px_0px,rgba(0,0,0,0.04)_0px_1px_1px_0px,rgba(0,0,0,0.04)_0px_2px_4px_0px] space-y-5" onClick={e => e.stopPropagation()}>
                       <div className="flex items-center justify-between">
-                        <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                        <h3 className="text-[15px] font-inter font-medium text-midnight-ink flex items-center gap-2">
                           {socialProviders.find(p => p.id === selectedProvider)?.Icon && (
                             <span>{React.createElement(socialProviders.find(p => p.id === selectedProvider).Icon)}</span>
                           )}
                           Sign in with {selectedProvider?.charAt(0).toUpperCase() + selectedProvider?.slice(1)}
                         </h3>
-                        <button onClick={() => setSocialModalOpen(false)} className="text-slate-400 hover:text-white transition-colors cursor-pointer">
+                        <button onClick={() => setSocialModalOpen(false)} className="text-driftwood hover:text-midnight-ink transition-colors cursor-pointer">
                           <X className="w-4 h-4" />
                         </button>
                       </div>
-                      <p className="text-xs text-slate-400">Enter the email address associated with your {selectedProvider?.charAt(0).toUpperCase() + selectedProvider?.slice(1)} account.</p>
+                      <p className="text-[13px] text-driftwood font-inter">Enter the email address associated with your {selectedProvider?.charAt(0).toUpperCase() + selectedProvider?.slice(1)} account.</p>
                       <div className="relative">
-                        <div className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none">
-                          <Mail className="w-4 h-4 text-slate-500" />
-                        </div>
+                        <div className={inputIconClass}><Mail className="w-4 h-4" /></div>
                         <input
                           type="email"
                           value={socialEmail}
@@ -241,14 +247,14 @@ export default function Login() {
                           onKeyDown={e => { if (e.key === 'Enter' && socialEmail.trim()) handleSocialLogin(selectedProvider, socialEmail); }}
                           placeholder="you@example.com"
                           autoFocus
-                          className="block w-full pl-10 pr-4 py-3 bg-slate-950/60 border border-slate-700 rounded-xl text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500/30 text-white placeholder-slate-600"
+                          className={inputClass}
                         />
                       </div>
                       <button
                         type="button"
                         disabled={!socialEmail.trim() || !socialEmail.includes('@')}
                         onClick={() => handleSocialLogin(selectedProvider, socialEmail)}
-                        className="w-full flex justify-center items-center gap-1.5 py-3 px-4 bg-gradient-to-r from-brand-600 to-brand-700 hover:from-brand-500 hover:to-brand-600 text-xs font-bold text-white rounded-xl shadow-lg transition-all disabled:opacity-50 cursor-pointer"
+                        className="w-full flex justify-center items-center gap-2 py-3 px-4 bg-midnight-ink text-white text-[14px] font-inter font-medium rounded-full hover:opacity-90 transition-all disabled:opacity-40 cursor-pointer"
                       >
                         Continue <ArrowRight className="w-4 h-4" />
                       </button>
@@ -259,42 +265,40 @@ export default function Login() {
 
               {/* ── Divider ────────────────────────────────────────────── */}
               <div className="relative flex items-center justify-center py-1">
-                <div className="absolute inset-x-0 h-px bg-slate-800" />
-                <span className="relative px-3 bg-slate-950 text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+                <div className="absolute inset-x-0 h-px bg-ash-border" />
+                <span className="relative px-4 bg-warm-sand text-[10px] text-fog font-inter font-medium uppercase tracking-[0.1em]">
                   Or with Email OTP (Thirdweb)
                 </span>
               </div>
 
               {/* ── Email OTP ──────────────────────────────────────────── */}
-              <div className="space-y-1.5">
-                <label className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Email Address</label>
+              <div className="space-y-2">
+                <label className={labelClass}>Email Address</label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none">
-                    <Mail className="w-4 h-4 text-slate-500" />
-                  </div>
+                  <div className={inputIconClass}><Mail className="w-4 h-4" /></div>
                   <input
                     type="email"
                     value={web3Email}
                     onChange={e => setWeb3Email(e.target.value)}
                     placeholder="name@company.com"
                     disabled={web3Loading || magicLinkSent}
-                    className="block w-full pl-10 pr-4 py-3 bg-slate-950/40 border border-slate-800 rounded-xl text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500/30 text-white placeholder-slate-600 disabled:opacity-50"
+                    className={`${inputClass} disabled:opacity-50`}
                   />
                 </div>
               </div>
 
               {magicLinkSent ? (
-                <div className="p-4 rounded-xl bg-brand-500/5 border border-brand-500/10 space-y-2 text-center animate-fade-in">
-                  <Send className="w-6 h-6 text-brand-400 mx-auto mb-1 animate-bounce" />
-                  <h6 className="text-xs font-bold text-white">Verification Link Sent!</h6>
-                  <p className="text-[10px] text-slate-400">Check your email — click the link to activate your embedded wallet.</p>
+                <div className="p-5 rounded-[20px] bg-white border border-ash-border space-y-2 text-center">
+                  <Send className="w-5 h-5 text-midnight-ink mx-auto mb-1 animate-bounce" />
+                  <h6 className="text-[13px] font-inter font-medium text-midnight-ink">Verification Link Sent!</h6>
+                  <p className="text-[11px] text-driftwood font-inter">Check your email — click the link to activate your embedded wallet.</p>
                 </div>
               ) : (
                 <button
                   type="button"
                   disabled={web3Loading || !web3Email}
                   onClick={() => handleThirdwebAuth('email')}
-                  className="w-full flex justify-center items-center gap-1.5 py-3 px-4 bg-gradient-to-r from-brand-600 to-brand-700 hover:from-brand-500 hover:to-brand-600 text-xs font-bold text-white rounded-xl shadow-lg transition-all disabled:opacity-50 cursor-pointer"
+                  className="w-full flex justify-center items-center gap-2 py-3 px-4 bg-midnight-ink text-white text-[14px] font-inter font-medium rounded-full hover:opacity-90 transition-all disabled:opacity-40 cursor-pointer"
                 >
                   {web3Loading ? 'Authenticating...' : 'Sign In with Email OTP'}
                   {!web3Loading && <ArrowRight className="w-4 h-4" />}
@@ -303,8 +307,8 @@ export default function Login() {
 
               {/* ── External Wallet ────────────────────────────────────── */}
               <div className="relative flex items-center justify-center py-1">
-                <div className="absolute inset-x-0 h-px bg-slate-800" />
-                <span className="relative px-3 bg-slate-950 text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+                <div className="absolute inset-x-0 h-px bg-ash-border" />
+                <span className="relative px-4 bg-warm-sand text-[10px] text-fog font-inter font-medium uppercase tracking-[0.1em]">
                   Web3 Wallet
                 </span>
               </div>
@@ -313,49 +317,45 @@ export default function Login() {
                 type="button"
                 disabled={web3Loading || !!socialLoadingType}
                 onClick={() => handleThirdwebAuth('metamask')}
-                className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-slate-900/40 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/30 text-xs font-bold text-slate-300 hover:text-white rounded-xl transition-all disabled:opacity-50 cursor-pointer"
+                className="w-full flex items-center justify-center gap-2.5 py-3 px-4 bg-white text-midnight-ink border border-ash-border hover:border-midnight-ink/30 text-[13px] font-inter font-medium rounded-full transition-all disabled:opacity-40 cursor-pointer shadow-[rgba(0,0,0,0.06)_0px_0px_0px_1px,rgba(0,0,0,0.04)_0px_1px_2px_0px]"
               >
-                <Wallet className="w-4 h-4 text-amber-400" />
+                <Wallet className="w-4 h-4" />
                 Connect Wallet (Core / MetaMask / Coinbase)
               </button>
 
               {/* Thirdweb + Avalanche attribution */}
-              <p className="text-center text-[9px] text-slate-600 mt-1">
+              <p className="text-center text-[10px] text-driftwood font-inter mt-1">
                 Powered by{' '}
-                <span className="text-slate-500 font-semibold">Thirdweb Embedded Wallets</span>
+                <span className="text-midnight-ink font-medium">Thirdweb Embedded Wallets</span>
                 {' '}· deployed on{' '}
-                <span className="text-slate-500 font-semibold">Avalanche Fuji Testnet</span>
+                <span className="text-midnight-ink font-medium">Avalanche Fuji Testnet</span>
               </p>
             </div>
           ) : (
             /* ── Standard Login Form ──────────────────────────────────── */
             <form className="space-y-6" onSubmit={handleSubmit}>
-              <div className="space-y-1.5">
-                <label htmlFor="email" className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Email address</label>
+              <div className="space-y-2">
+                <label htmlFor="email" className={labelClass}>Email address</label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none">
-                    <Mail className="w-4 h-4 text-slate-500" />
-                  </div>
+                  <div className={inputIconClass}><Mail className="w-4 h-4" /></div>
                   <input id="email" type="email" required value={email} onChange={e => setEmail(e.target.value)}
                     placeholder="name@example.com"
-                    className="block w-full pl-10 pr-4 py-3 bg-slate-950/40 border border-slate-800 rounded-xl text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500/30 text-white placeholder-slate-600" />
+                    className={inputClass} />
                 </div>
               </div>
 
-              <div className="space-y-1.5">
-                <label htmlFor="password" className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Password</label>
+              <div className="space-y-2">
+                <label htmlFor="password" className={labelClass}>Password</label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none">
-                    <Lock className="w-4 h-4 text-slate-500" />
-                  </div>
+                  <div className={inputIconClass}><Lock className="w-4 h-4" /></div>
                   <input id="password" type="password" required value={password} onChange={e => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="block w-full pl-10 pr-4 py-3 bg-slate-950/40 border border-slate-800 rounded-xl text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500/30 text-white placeholder-slate-600" />
+                    className={inputClass} />
                 </div>
               </div>
 
               <button type="submit" disabled={loading}
-                className="group w-full flex justify-center items-center gap-1.5 py-3 px-4 bg-gradient-to-r from-brand-600 to-brand-700 hover:from-brand-500 hover:to-brand-600 text-xs font-bold text-white rounded-xl shadow-lg transition-all disabled:opacity-50 cursor-pointer">
+                className="group w-full flex justify-center items-center gap-2 py-3 px-4 bg-midnight-ink text-white text-[14px] font-inter font-medium rounded-full hover:opacity-90 transition-all disabled:opacity-40 cursor-pointer">
                 {loading ? 'Signing in...' : 'Sign In'}
                 {!loading && <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />}
               </button>
@@ -363,9 +363,9 @@ export default function Login() {
           )}
         </div>
 
-        <p className="text-center text-xs text-slate-500">
+        <p className="text-center text-[13px] text-driftwood font-inter">
           Don't have an account?{' '}
-          <Link to="/register" className="font-semibold text-brand-400 hover:text-brand-300 transition-colors">
+          <Link to="/register" className="font-medium text-midnight-ink hover:opacity-70 transition-opacity">
             Register here
           </Link>
         </p>
